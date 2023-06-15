@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/constant/dimen.dart';
 import 'package:movie_app/constant/string.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:movie_app/screen/artistdetails.dart';
+import 'package:movie_app/screen/searchpage.dart';
 import '../constant/color.dart';
 //Search Bar
 class HomePageSearchBar extends StatelessWidget {
@@ -49,10 +51,13 @@ class HomePageSearchBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(kSearchButtonRadius),
             color:kSecondaryColor
           ),
-          child: IconButton(onPressed: (){}, 
+          child: IconButton(onPressed: (){
+            Navigator.push(context,
+             MaterialPageRoute(builder: (context)=> const SearchPage()));
+          }, 
                 splashColor:kIconButtonSplashColor,
           icon: const Icon(Icons.search,size: kSearchIconSize,
-          color: kSearchIconColor,)),
+          color: kIconColor,)),
         )
         ],
       ),
@@ -86,7 +91,7 @@ class MovieGenres extends StatelessWidget {
                   
                   child: Padding(
                     padding: const EdgeInsets.only(left: kSP8x,right:kSP8x,top: kSP10x),
-                    child: Text(currentItem,style: TextStyle(
+                    child: Text(currentItem,style: const TextStyle(
                       color: kPrimaryTextColor
                     ),
                     ),
@@ -105,11 +110,132 @@ class RecentMoviesSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedNetworkImage(
-       imageUrl: "https://e0.pxfuel.com/wallpapers/114/292/desktop-wallpaper-iron-man-movie-poster-printable-file-iron-man-poster-thumbnail.jpg",
-       progressIndicatorBuilder: (context, url, downloadProgress) => 
-               CircularProgressIndicator(value: downloadProgress.progress),
-       errorWidget: (context, url, error) => Icon(Icons.error),
+    return Stack(
+      children: [CarouselSlider(
+  options: CarouselOptions(
+    height: kRecentMovieSliderH,
+  autoPlay: true,
+  enlargeCenterPage: true,
+  viewportFraction: kRecentMovieSliderVPF
+  ),
+  items: [1,2,3,4,5].map((i) {
+    return Builder(
+      builder: (BuildContext context) {
+        return Stack(
+         children:[ ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child:SizedBox(
+              width: kRecentMovieSliderH,
+              child: CachedNetworkImage(
+                  fit: BoxFit.fill,
+                     imageUrl: kImageMario,
+                     progressIndicatorBuilder: (context, url, downloadProgress) => Image.asset(kLoadImage)
+                     
+                  ),
+              ),   
+            ),
+              Align(
+                alignment: Alignment.center,
+                child: Container(
+                  width: kCT50x,
+                  height: kCT50x,
+                  decoration: const BoxDecoration(
+                    color: kSecondaryColor,
+                    shape: BoxShape.circle
+                  ),
+                  child:const  Icon(Icons.play_arrow_outlined,
+                  color: kIconColor),
+                ),
+              )
+            ]
+        );
+      },
     );
+  }).toList(),
+),
+Container(
+  width: double.infinity,
+  height: kRecentMovieSliderH,
+  decoration: const BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.bottomCenter,
+      end: Alignment.topCenter,
+      colors: [ 
+        kPrimaryColor,
+        Colors.transparent,
+    ])
+  ),
+  ),    
+      ],
+    );
+  }
+}
+
+class ActorList extends StatelessWidget {
+  const ActorList({super.key,required this.actName});
+  final String actName;
+
+  @override
+  Widget build(BuildContext context) {
+    return CarouselSlider(
+    options: CarouselOptions(
+    height: kMovieWidgetH350x,
+    enlargeCenterPage: true,
+    viewportFraction: 0.7
+    ),
+    items: [1,2,3,4,5].map((i) {
+    return Builder(
+      builder: (BuildContext context) {
+    return GestureDetector(
+      onTap: (){
+    Navigator.push(context,
+     MaterialPageRoute(builder: (context)=> ActorDetail()));
+      },
+      child: Stack(
+       children:[ ClipRRect(
+          borderRadius: BorderRadius.circular(kBDRadius),
+          child:SizedBox(
+            width: kSB280x,
+            child: CachedNetworkImage(
+                  fit: BoxFit.fill,
+                     imageUrl: kImageMario,
+                     progressIndicatorBuilder: (context, url, downloadProgress) => Image.asset(kLoadImage)
+                  ),
+            ),   
+          ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: kSP30x),
+                child: Text(
+                 actName,style:const TextStyle(
+                    fontSize: kFS25x,
+                    color: kPrimaryTextColor,
+                    fontWeight: FontWeight.w600
+                  ),
+                ),
+              )
+            ),
+            Container(
+    width: double.infinity,
+    height: kCT350x,
+    decoration: const BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.bottomCenter,
+      end: Alignment.topCenter,
+      colors: [ 
+    Colors.black,
+    Colors.transparent,
+    Colors.transparent,
+    ])
+    ),
+    ),    
+          ]
+      ),
+    );
+      },
+    );
+    }).toList(),
+    ); 
   }
 }
